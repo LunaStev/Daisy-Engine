@@ -2,6 +2,7 @@
 
 #include "Core/Module.h"
 #include "Core/Math.h"
+#include "DaisyPlatform.h"
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <memory>
@@ -77,12 +78,15 @@ struct ProceduralSettings {
 
 class DaisyRender : public Module {
 public:
-    DaisyRender();
+    DaisyRender() : Module("DaisyRender") {}
     virtual ~DaisyRender() = default;
     
     bool Initialize() override;
     void Update(float deltaTime) override;
     void Shutdown() override;
+    
+    void SetWindow(Window* window) { m_window = window; }
+    Window* GetWindow() const { return m_window; }
     
     bool InitializeVulkan();
     void ShutdownVulkan();
@@ -130,6 +134,8 @@ private:
     bool CreateRenderPass();
     bool CreateCommandBuffers();
     void RecreateSwapchain();
+    
+    Window* m_window = nullptr;
     
     void UpdateLOD();
     void UpdateCulling();

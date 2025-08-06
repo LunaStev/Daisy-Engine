@@ -5,8 +5,6 @@
 
 namespace Daisy {
 
-DaisyRender::DaisyRender() : Module("DaisyRender") {
-}
 
 bool DaisyRender::Initialize() {
     DAISY_INFO("Initializing Daisy Render Engine");

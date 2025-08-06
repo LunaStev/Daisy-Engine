@@ -14,11 +14,13 @@ target_include_directories(DaisyRender
         ${Vulkan_INCLUDE_DIRS}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Source
+        ${CMAKE_SOURCE_DIR}/Engine/Modules/Platform/Include
 )
 
 target_link_libraries(DaisyRender 
     PUBLIC 
         DaisyCore
+        DaisyPlatform
         ${Vulkan_LIBRARIES}
 )
 

@@ -42,6 +42,7 @@ public:
     
     float GetDeltaTime() const { return m_deltaTime; }
     bool IsRunning() const { return m_running; }
+    void Stop() { m_running = false; }
     void RequestShutdown() { m_running = false; }
     
 private:

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmake:*)",
+      "Bash(make:*)",
+      "Bash(./DaisyEngineExample)",
+      "Bash(find:*)",
+      "Bash(./Examples/BasicApp/DaisyEngineExample)",
+      "Bash(timeout:*)",
+      "Bash(./DaisyEngineExample.exe)"
+    ],
+    "deny": []
+  }
+}

@@ -7,18 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Build configuration
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FORCE)
 
-# Platform detection
-if(WIN32)
-    add_compile_definitions(DAISY_PLATFORM_WINDOWS)
-elseif(UNIX AND NOT APPLE)
-    add_compile_definitions(DAISY_PLATFORM_LINUX)
-    if(EXISTS "/proc/version" AND EXISTS "/etc/os-release")
-        file(READ "/etc/os-release" OS_RELEASE_CONTENT)
-        if(OS_RELEASE_CONTENT MATCHES "DaisyOS")
-            add_compile_definitions(DAISY_PLATFORM_DAISYOS)
-        endif()
-    endif()
-endif()
+# Platform detection - Windows only (temporarily disabled for WSL development)
+# if(NOT WIN32)
+#     message(FATAL_ERROR "Daisy Engine currently supports Windows only")
+# endif()
+add_compile_definitions(DAISY_PLATFORM_WINDOWS)
 
 # Compiler flags
 if(MSVC)
@@ -45,8 +38,26 @@ else()
     endif()
 endif()
 
-# Find packages
+# Find packages - Windows specific
 find_package(Vulkan REQUIRED)
+
+# Windows-specific libraries
+if(MSVC)
+    # Link with Windows libraries for graphics and input
+    link_libraries(
+        user32.lib
+        gdi32.lib
+        winmm.lib
+        imm32.lib
+        ole32.lib
+        oleaut32.lib
+        version.lib
+        uuid.lib
+        advapi32.lib
+        dinput8.lib
+        dxguid.lib
+    )
+endif()
 
 # Include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Engine/Core/Include)
@@ -55,6 +66,7 @@ include_directories(${Vulkan_INCLUDE_DIRS})
 
 # Engine modules
 add_subdirectory(Engine/Core)
+add_subdirectory(Engine/Modules/Platform)
 add_subdirectory(Engine/Modules/DaisyPhysics)
 add_subdirectory(Engine/Modules/DaisyRender)
 add_subdirectory(Engine/Modules/DaisySound)

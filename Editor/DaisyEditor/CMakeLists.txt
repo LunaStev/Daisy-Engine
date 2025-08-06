@@ -21,6 +21,7 @@ target_include_directories(DaisyEditor
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Include
         ${CMAKE_SOURCE_DIR}/Engine/Core/Include
+        ${CMAKE_SOURCE_DIR}/Engine/Modules/Platform/Include
         ${CMAKE_SOURCE_DIR}/Engine/Modules/DaisyPhysics/Include
         ${CMAKE_SOURCE_DIR}/Engine/Modules/DaisyRender/Include
         ${CMAKE_SOURCE_DIR}/Engine/Modules/DaisySound/Include
@@ -32,6 +33,7 @@ target_include_directories(DaisyEditor
 
 target_link_libraries(DaisyEditor
     DaisyCore
+    DaisyPlatform
     DaisyPhysics
     DaisyRender
     DaisySound

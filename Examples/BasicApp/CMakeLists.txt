@@ -7,6 +7,7 @@ add_executable(DaisyEngineExample ${BASIC_APP_SOURCES})
 target_include_directories(DaisyEngineExample 
     PRIVATE
         ${CMAKE_SOURCE_DIR}/Engine/Core/Include
+        ${CMAKE_SOURCE_DIR}/Engine/Modules/Platform/Include
         ${CMAKE_SOURCE_DIR}/Engine/Modules/DaisyPhysics/Include
         ${CMAKE_SOURCE_DIR}/Engine/Modules/DaisyRender/Include
         ${CMAKE_SOURCE_DIR}/Engine/Modules/DaisySound/Include
@@ -18,6 +19,7 @@ target_include_directories(DaisyEngineExample
 
 target_link_libraries(DaisyEngineExample
     DaisyCore
+    DaisyPlatform
     DaisyPhysics
     DaisyRender
     DaisySound

@@ -1,4 +1,5 @@
 #include "DaisyEditor.h"
+#include "DaisyPlatform.h"
 #include "Core/Logger.h"
 #include <iostream>
 
@@ -81,6 +82,11 @@ int main(int argc, char* argv[]) {
     std::cout << "===========================================================" << std::endl;
     std::cout << "             Thank you for using Daisy Editor!            " << std::endl;
     std::cout << "===========================================================" << std::endl;
+    
+    #ifdef _WIN32
+    std::cout << "\nPress Enter to exit..." << std::endl;
+    std::cin.get();
+    #endif
     
     return 0;
 }

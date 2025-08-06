@@ -1,6 +1,7 @@
 #include "DaisyEditor.h"
 #include "EditorUI/EditorWindow.h"
 #include "Core/Logger.h"
+#include "DaisyPlatform.h"
 #include "DaisyPhysics.h"
 #include "DaisyRender.h"
 #include "DaisySound.h"
@@ -40,14 +41,33 @@ bool DaisyEditor::Initialize() {
         return false;
     }
     
-    // Register engine modules
-    auto* physics = m_engine->RegisterModule<Daisy::DaisyPhysics>();
+    // Register engine modules - Platform first
+    auto* platform = m_engine->RegisterModule<Daisy::DaisyPlatform>();
     auto* renderer = m_engine->RegisterModule<Daisy::DaisyRender>();
+    auto* physics = m_engine->RegisterModule<Daisy::DaisyPhysics>();
     auto* sound = m_engine->RegisterModule<Daisy::DaisySound>();
     auto* ai = m_engine->RegisterModule<Daisy::DaisyAI>();
     auto* network = m_engine->RegisterModule<Daisy::DaisyNet>();
     auto* worldStreamer = m_engine->RegisterModule<Daisy::WorldStreamer>();
     auto* scriptSystem = m_engine->RegisterModule<Daisy::ScriptSystem>();
+    
+    // Connect renderer to the editor window
+    if (platform && renderer) {
+        Daisy::WindowProperties editorProps;
+        editorProps.title = "Daisy Editor";
+        editorProps.width = 1600;
+        editorProps.height = 900;
+        editorProps.resizable = true;
+        
+        // Create editor window or use main window
+        auto* editorWindow = platform->GetMainWindow();
+        if (!editorWindow) {
+            DAISY_ERROR("Failed to get main window for editor");
+            return false;
+        }
+        
+        renderer->SetWindow(editorWindow);
+    }
     
     // Configure renderer for editor
     if (renderer) {
@@ -85,6 +105,12 @@ void DaisyEditor::Run() {
     auto lastTime = std::chrono::high_resolution_clock::now();
     
     while (m_running && m_engine->IsRunning()) {
+        // Check if window should close
+        auto* platform = m_engine->GetModule<Daisy::DaisyPlatform>();
+        if (platform && platform->GetMainWindow() && platform->GetMainWindow()->ShouldClose()) {
+            m_running = false;
+            break;
+        }
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
         lastTime = currentTime;

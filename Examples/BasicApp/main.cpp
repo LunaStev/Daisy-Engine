@@ -1,4 +1,5 @@
 #include "DaisyEngine.h"
+#include "DaisyPlatform.h"
 #include "DaisyPhysics.h"
 #include "DaisyRender.h"
 #include "DaisySound.h"
@@ -8,6 +9,7 @@
 #include "ScriptSystem.h"
 #include <thread>
 #include <chrono>
+#include <iostream>
 
 using namespace Daisy;
 
@@ -21,14 +23,20 @@ int main() {
     
     auto* engine = DAISY_ENGINE.GetEngine();
     
-    // Register all engine modules
-    auto* physics = engine->RegisterModule<DaisyPhysics>();
+    // Register all engine modules - Platform module must be first
+    auto* platform = engine->RegisterModule<DaisyPlatform>();
     auto* renderer = engine->RegisterModule<DaisyRender>();
+    auto* physics = engine->RegisterModule<DaisyPhysics>();
     auto* sound = engine->RegisterModule<DaisySound>();
     auto* ai = engine->RegisterModule<DaisyAI>();
     auto* network = engine->RegisterModule<DaisyNet>();
     auto* worldStreamer = engine->RegisterModule<WorldStreamer>();
     auto* scriptSystem = engine->RegisterModule<ScriptSystem>();
+    
+    // Connect renderer to the main window
+    if (platform && renderer) {
+        renderer->SetWindow(platform->GetMainWindow());
+    }
     
     DAISY_INFO("All modules registered successfully");
     
@@ -167,9 +175,14 @@ int main() {
     Daisy::Vector3 cameraPos(7000000, 0, 0); // Start in low Earth orbit
     Daisy::Vector3 cameraVelocity(0, 7800, 0); // Orbital velocity
     
-    // Main game loop
+    // Main game loop - run until window is closed
     int frameCount = 0;
-    while (engine->IsRunning() && frameCount < 1000) { // Limit frames for example
+    while (engine->IsRunning()) { 
+        // Check if main window should close
+        if (platform && platform->GetMainWindow() && platform->GetMainWindow()->ShouldClose()) {
+            engine->Stop();
+            break;
+        }
         // Update camera position (simulate orbital motion)
         cameraPos = cameraPos + cameraVelocity * engine->GetDeltaTime();
         
@@ -217,6 +230,11 @@ int main() {
     
     DAISY_INFO("Shutting down Daisy Engine Example Application");
     DAISY_ENGINE.Shutdown();
+    
+    #ifdef _WIN32
+    std::cout << "\nPress Enter to exit..." << std::endl;
+    std::cin.get();
+    #endif
     
     return 0;
 }
